@@ -1,0 +1,79 @@
+At present, the setup consists of the following:
+  1 Segway PT I series motor:  The motor
+  1 STM32F439 Nucleo 144 processor board:  The processor
+  1 TI DRV8312EVM (Rev. D):  Bridge driver and power electronics (no
+    control card installed)
+  1 MIKROE-3299 Knob G click:  Quadrature encoded knob for speed command input
+  1 EXTECH 283313 power supply: Set at 24.5V, 0.4A.  Provides power for drive
+    electronics and charging batteries
+  2 Duracell Dura12-7F AGM lead acid batteries:  Power drive electronics and
+    absorb regen.
+  1 Custom motor adapter board: energize motor relays, power motor hall sensors 
+    and convert hall sensor signals to 0V..3.3V range
+    
+The following tools were used for the software development
+  Developed under MacOS.  The MacOS supplied perl and make utility are required
+      for the build
+  Compiled with gcc version 9.3.1 20200408 (release) (GNU Arm Embedded 
+      Toolchain 9-2020-q2-update)
+  Software developed with the Eclipse Embedded CDT (C/C++ Development Tools) IDE
+  Nucleo on-board STLink updated to Segger J-Link compatibility with the
+      Segger STLinkReflash utility
+  JTAG connection to Nucleo processor provided via the Segger J-Link software
+      and GDB server
+      
+Board setup for STM 32F439 Nucleo 144
+   Remove solder bridges:  13, 160, 164, 178, 181, 183
+   Add pins to CN11:
+     pin 9 (PF6)
+     pin 31 (PB7)
+     pin 30 (PA1)
+     pin 36 (PC1)
+   Add pins to CN12:
+     pin 28 (PB14)
+     pin 35 (PA2)
+     
+ ADC channels:
+   Phase voltage A: ADC CH0 (Nucleo PA0, CN10 pin 29) connect to (DRV8312EVM J5, Pin 36)
+   Phase voltage B: ADC CH1 (Nucleo PA1, CN11 pin 30) connect to (DRV8312EVM J5, Pin 34)
+   Phase voltage C: ADC CH4 (Nucleo PF6, CN11 pin 9)  connect to (DRV8312EVM J5, Pin 31)
+   
+   Phase current A: ADC CH2 (Nucleo PA2, CN12 pin 35) connect to (DRV8312EVM J5, Pin 37)
+   Phase current B: ADC CH3 (Nucleo PA3, CN9 pin 1)   connect to (DRV8312EVM J5, Pin 35)
+   Phase current C: ADC CH5 (Nucleo PF7, CN9 pin 26)  connect to (DRV8312EVM J5, Pin 32)
+   
+   Motor Hall A: ADC CH10 (Nucleo PC0, CN9 pin3)   connect to (Adapter board, 3.3V Hall 1)
+   Motor Hall B: ADC CH11 (Nucleo PC1, CN11 pin36) connect to (Adapter board, 3.3V Hall 2)
+   Motor Hall C: ADC CH6  (Nucleo PF8, CN9 pin 24) connect to (Adapter board, 3.3V Hall 3)
+   
+   VBus: ADC CH12 (Nucleo PC2, CN10 pin9) connect to (DRV8312EVM J5, Pin 33)
+   IBus: ADC CH13 (Nucleo PC3, CN9 pin5)  connect to (DRV8312EVM J5, Pin 29)
+     
+ DAC outputs
+   DAC 1: (Nucleo PA4, CN7 pin 17) connect to scope
+   DAC 2: (Nucleo PA5, CN7 pin 10) connect to scope
+   
+ External ADC Trigger (when snooping EVM)
+   (Nucleo PC11, CN8  pin 8) connect to (DRV8312EVM J5, Pin 24)
+   
+ Bridge Enables
+   ENA:  (Nucleo PD14, CN7 pin 16) connect to (DRV8312EVM J5, Pin 6)
+   ENB:  (Nucleo PD15, CN7 pin 18) connect to (DRV8312EVM J5, Pin 9)
+   ENC:  (Nucleo PF12, CN7 pin 20) connect to (DRV8312EVM J5, Pin 12)
+   
+ PWM Outputs
+   PWM A:  (Nucleo PE9, CN10 pin 4)   connect to (DRV8312EVM J5, Pin 26)
+   PWM B:  (Nucleo PE11, CN10 pin 6)  connect to (DRV8312EVM J5, Pin 25)
+   PWM C:  (Nucleo PE13, CN10 pin 10) connect to (DRV8312EVM J5, Pin 28)
+   
+ Speed Command Encoder and button
+   Encoder A output:    (Nucleo PC6, CN7 pin1)    connect to (MIKROE-3299 ENCA)
+   Encoder B output:    (Nucleo PC8, CN7 pin11)   connect to (MIKROE-3299 ENCB)
+   Encoder push button: (Nucleo PB11, CN10 pin34) connect to (MIKROE-3299 SW)
+   Power for encoder:   (Nucleo CN8 pin7)         connect to (MIKROE-3299 3.3V)
+   Ground for encoder:  (Nucleo CN8 pin11)        connect to (MIKROE-3299 GND)
+      
+ Others
+   Timing LED: (Nucleo PB7, CN11 pin 21) connect to scope
+ 
+ 
