@@ -201,7 +201,7 @@ extern "C"
         //
         //  This is called by the RTOS sysTick ISR.  We simply increment our
         //  running millisecond counter. If a second has passed, we increment
-        //	our second counter as well.  We do not assume that the OS tick
+        //  our second counter as well.  We do not assume that the OS tick
         //  rate is an integral number of milliseconds, but it most likely is.
         //
         const float32_t millisecondsPerOSTick =

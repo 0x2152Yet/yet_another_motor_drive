@@ -73,26 +73,26 @@ static void powerOnPeripherals();
 ////////////////////////////////////////////////////////////////////////////////
 int main(void)
 {
-	//
-	//  We setup the hardware.  The system clocks should have already been
-	//  configured in c_startup.cpp.  Note that we initialize the timers
+    //
+    //  We setup the hardware.  The system clocks should have already been
+    //  configured in c_startup.cpp.  Note that we initialize the timers
     //  early in the setup so other hardware setups and use the high-res
     //  delay if necessary.
-	//
+    //
     powerOnPeripherals();
     theTimers.initTimers();
-	theGPIOInterface.initializeGPIOInterface();
-	thePhysicalInputs.initializePhysicalInputs();
+    theGPIOInterface.initializeGPIOInterface();
+    thePhysicalInputs.initializePhysicalInputs();
 
-	//
-	//  We initialize each thread.
-	//
-	theBackgroundThread.initBackgroundThread();
-	theMotorController.initializeMotorController();
+    //
+    //  We initialize each thread.
+    //
+    theBackgroundThread.initBackgroundThread();
+    theMotorController.initializeMotorController();
 
-	//
-	//  We start the kernel.  This should not return.
-	//
+    //
+    //  We start the kernel.  This should not return.
+    //
     OSInterface::startScheduler();
 
     while (true)

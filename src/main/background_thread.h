@@ -37,27 +37,27 @@
 class BackgroundThread
 {
 public:
-	BackgroundThread();
-	~BackgroundThread() {};
+    BackgroundThread();
+    ~BackgroundThread() {};
 
-	//
-	//  This performs initializations required before the scheduler is
-	//  started.
-	//
-	void initBackgroundThread();
+    //
+    //  This performs initializations required before the scheduler is
+    //  started.
+    //
+    void initBackgroundThread();
 
-	//
-	//  This is a static function intended to be provided to the OS at
-	//  initialization.
-	//
-	static void backgroundThreadEntryPoint(void * const thisPtr);
+    //
+    //  This is a static function intended to be provided to the OS at
+    //  initialization.
+    //
+    static void backgroundThreadEntryPoint(void * const thisPtr);
 
 private:
 
-	//
-	//  This is the thread's main loop.
-	//
-	void BackgroundThreadLoop();
+    //
+    //  This is the thread's main loop.
+    //
+    void BackgroundThreadLoop();
 
 };
 

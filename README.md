@@ -4,7 +4,7 @@ sensored and sensor-less operation.
 
 ### Overview
 This project contains the software that implements the field effect control (FOC)
-of a permanent magnet DC (PMDC) motor.  Support is included for controlling
+of a permanent magnet DC (PMDC) motor. Support is included for controlling
 the motor either using a physical shaft encoder ("sensors") or by estimating the
 motor's shaft angle using other sensed data ("sensor-less").  
 

@@ -82,24 +82,24 @@ void BackgroundThread::initBackgroundThread()
 ////////////////////////////////////////////////////////////////////////////////
 void BackgroundThread::backgroundThreadEntryPoint(void * const thisPtr)
 {
-	if (thisPtr != nullptr)
-	{
-		//
-		//  We call the main loop using the passed in "this" pointer.
-		//
-		BackgroundThread *const thisTaskPointer =
-			reinterpret_cast<BackgroundThread *const>(thisPtr);
-		thisTaskPointer->BackgroundThreadLoop();
-	}
+    if (thisPtr != nullptr)
+    {
+        //
+        //  We call the main loop using the passed in "this" pointer.
+        //
+        BackgroundThread *const thisTaskPointer =
+            reinterpret_cast<BackgroundThread *const>(thisPtr);
+        thisTaskPointer->BackgroundThreadLoop();
+    }
 
-	//
-	//  This call should not get here.  If it does, we'll loop with a delay
-	//  to support debugging.
-	//
-	while (true)
-	{
-		OSInterface::delay(1000U);
-	}
+    //
+    //  This call should not get here.  If it does, we'll loop with a delay
+    //  to support debugging.
+    //
+    while (true)
+    {
+        OSInterface::delay(1000U);
+    }
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -116,23 +116,23 @@ void BackgroundThread::BackgroundThreadLoop()
     //
     //  We initialize the test support UART.
     //
-	theUARTInterface.initializeUARTInterface();
+    theUARTInterface.initializeUARTInterface();
 
-	//
-	//  This is the main background loop.
-	//
-	while (true)
-	{
-		OSInterface::delay(100U);
+    //
+    //  This is the main background loop.
+    //
+    while (true)
+    {
+        OSInterface::delay(100U);
 
-		//
-		//  We print the contents of the data log if there is data in it.
-		//
-		theDataLogger.printDataLogBuffer();
+        //
+        //  We print the contents of the data log if there is data in it.
+        //
+        theDataLogger.printDataLogBuffer();
 
-		//
-		//  We print the low rate data if there is any to print.
-		//
+        //
+        //  We print the low rate data if there is any to print.
+        //
         theDataLogger.printLowRateItems();
-	}
+    }
 }

@@ -103,37 +103,37 @@ namespace GPIODefinitions
     const uint32_t uartTXPin             = LL_GPIO_PIN_8;
     const uint32_t uartRXPin             = LL_GPIO_PIN_9;
 
-	//
-	//  These are the LEDs used to provide status and triggers.
-	//
-	GPIO_TypeDef *const statusLEDPort  = GPIOB;
-	const uint32_t statusLEDPin        = LL_GPIO_PIN_0;
+    //
+    //  These are the LEDs used to provide status and triggers.
+    //
+    GPIO_TypeDef *const statusLEDPort  = GPIOB;
+    const uint32_t statusLEDPin        = LL_GPIO_PIN_0;
     GPIO_TypeDef *const timingLEDPort  = GPIOB;
     const uint32_t timingLEDPin        = LL_GPIO_PIN_7;
-	GPIO_TypeDef *const triggerLEDPort = GPIOB;
-	const uint32_t triggerLEDPin       = LL_GPIO_PIN_14;
+    GPIO_TypeDef *const triggerLEDPort = GPIOB;
+    const uint32_t triggerLEDPin       = LL_GPIO_PIN_14;
 
-	//
+    //
     //  These are the pins used to interface to the quadrature encoded
-	//  speed command input.
+    //  speed command input.
     //
     GPIO_TypeDef *const speedControlEncoderPort         = GPIOC;
     const uint32_t speedControlEncoderAlternateFunction = LL_GPIO_AF_3;
     const uint32_t speedControlerEncoderAPin            = LL_GPIO_PIN_6;
     const uint32_t speedControlerEncoderBPin            = LL_GPIO_PIN_7;
 
-	//
-	// These are the pins that interface to a physical push buttons.
-	//
+    //
+    // These are the pins that interface to a physical push buttons.
+    //
     GPIO_TypeDef *const onBoardPushButtonPort  = GPIOC;
     const uint32_t onBoardpushButtonPin        = LL_GPIO_PIN_13;
     GPIO_TypeDef *const externalPushButtonPort = GPIOB;
     const uint32_t externalPushButtonPin       = LL_GPIO_PIN_11;
 
-	//
-	//  For testing, we configure an external trigger for the
-	//  ADC.
-	//
+    //
+    //  For testing, we configure an external trigger for the
+    //  ADC.
+    //
     GPIO_TypeDef *const externalADCTriggerPort  = GPIOC;
     const uint32_t externalADCTriggerPin        = LL_GPIO_PIN_11;
 
@@ -144,10 +144,10 @@ namespace GPIODefinitions
 //
 namespace TimerDefinitions
 {
-	//
-	//  These are the timers that are used to control the PWM outputs and
+    //
+    //  These are the timers that are used to control the PWM outputs and
     //  ADC timing.
-	//
+    //
     TIM_TypeDef *const PWMTimer = TIM1;
     TIM_TypeDef *const ADCTimer = TIM3;
 

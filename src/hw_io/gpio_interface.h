@@ -39,24 +39,24 @@ using namespace GPIODefinitions;
 class GPIOInterface
 {
 public:
-	GPIOInterface();
-	~GPIOInterface() {};
+    GPIOInterface();
+    ~GPIOInterface() {};
 
-	//
-	//  This prepares the GPIO interface for operation.
-	//
-	void initializeGPIOInterface();
+    //
+    //  This prepares the GPIO interface for operation.
+    //
+    void initializeGPIOInterface();
 
-	//
-	//  These enable/disable the bridge driver.  If the bridge driver faults
-	//  disabling it will reset any fault condition.
-	//
-	static void disableBridgeOutput ()
-	{
+    //
+    //  These enable/disable the bridge driver.  If the bridge driver faults
+    //  disabling it will reset any fault condition.
+    //
+    static void disableBridgeOutput ()
+    {
         LL_GPIO_ResetOutputPin(bridgeDriverControlPort1, phaseAControlPin);
         LL_GPIO_ResetOutputPin(bridgeDriverControlPort1, phaseBControlPin);
         LL_GPIO_ResetOutputPin(bridgeDriverControlPort2, phaseCControlPin);
-	}
+    }
 
     static void enableBridgeOutput ()
     {
@@ -65,37 +65,37 @@ public:
         LL_GPIO_SetOutputPin(bridgeDriverControlPort2, phaseCControlPin);
     }
 
-	//
-	//  These provide the present state of the physical push-buttons
-	//
+    //
+    //  These provide the present state of the physical push-buttons
+    //
     static bool onBoardButtonIsPressed()
         { return (LL_GPIO_IsInputPinSet(onBoardPushButtonPort, onBoardpushButtonPin) == 1U); }
     static bool externalButtonIsPressed()
         { return (LL_GPIO_IsInputPinSet(externalPushButtonPort, externalPushButtonPin) == 0U); }
 
-	//
-	//  These control the LEDs.
-	//
-	static void turnStatusLEDOff()  { LL_GPIO_ResetOutputPin(statusLEDPort, statusLEDPin ); }
-	static void turnStatusLEDOn()   { LL_GPIO_SetOutputPin(statusLEDPort, statusLEDPin ); }
-	static void toggleStatusLED()   { LL_GPIO_TogglePin(statusLEDPort, statusLEDPin ); }
+    //
+    //  These control the LEDs.
+    //
+    static void turnStatusLEDOff()  { LL_GPIO_ResetOutputPin(statusLEDPort, statusLEDPin ); }
+    static void turnStatusLEDOn()   { LL_GPIO_SetOutputPin(statusLEDPort, statusLEDPin ); }
+    static void toggleStatusLED()   { LL_GPIO_TogglePin(statusLEDPort, statusLEDPin ); }
     static void turnTimingLEDOff()  { LL_GPIO_ResetOutputPin(timingLEDPort, timingLEDPin ); }
     static void turnTimingLEDOn()   { LL_GPIO_SetOutputPin(timingLEDPort, timingLEDPin ); }
     static void toggleTimingLED()   { LL_GPIO_TogglePin(timingLEDPort, timingLEDPin ); }
-	static void turnTriggerLEDOff() { LL_GPIO_ResetOutputPin(triggerLEDPort, triggerLEDPin ); }
-	static void turnTriggerLEDOn()  { LL_GPIO_SetOutputPin(triggerLEDPort, triggerLEDPin ); }
-	static void toggleTriggerLED()  { LL_GPIO_TogglePin(triggerLEDPort, triggerLEDPin ); }
+    static void turnTriggerLEDOff() { LL_GPIO_ResetOutputPin(triggerLEDPort, triggerLEDPin ); }
+    static void turnTriggerLEDOn()  { LL_GPIO_SetOutputPin(triggerLEDPort, triggerLEDPin ); }
+    static void toggleTriggerLED()  { LL_GPIO_TogglePin(triggerLEDPort, triggerLEDPin ); }
 
 private:
 
-	//
-	//  These initialize the various types of GPIOs.
-	//
-	void initializeDigitalOutputs();
-	void initializeDigitalInputs();
-	void initializeAnalogPins();
-	void initializeTimerPins();
-	void initializeUARTPins();
+    //
+    //  These initialize the various types of GPIOs.
+    //
+    void initializeDigitalOutputs();
+    void initializeDigitalInputs();
+    void initializeAnalogPins();
+    void initializeTimerPins();
+    void initializeUARTPins();
 };
 
 //

@@ -53,14 +53,14 @@ GPIOInterface::GPIOInterface()
 ////////////////////////////////////////////////////////////////////////////////
 void GPIOInterface::initializeGPIOInterface()
 {
-	//
-	//  We initialize each type of GPIO that is used.
-	//
+    //
+    //  We initialize each type of GPIO that is used.
+    //
     initializeDigitalInputs();
-	initializeDigitalOutputs();
+    initializeDigitalOutputs();
     initializeAnalogPins();
-	initializeTimerPins();
-	initializeUARTPins();
+    initializeTimerPins();
+    initializeUARTPins();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -70,27 +70,27 @@ void GPIOInterface::initializeGPIOInterface()
 ////////////////////////////////////////////////////////////////////////////////
 void GPIOInterface::initializeDigitalOutputs()
 {
-	using namespace GPIODefinitions;
+    using namespace GPIODefinitions;
 
-	LL_GPIO_InitTypeDef initData;
+    LL_GPIO_InitTypeDef initData;
 
-	LL_GPIO_StructInit(&initData);
+    LL_GPIO_StructInit(&initData);
 
-	initData.Mode       = LL_GPIO_MODE_OUTPUT;
-	initData.Speed      = LL_GPIO_SPEED_FREQ_MEDIUM;
-	initData.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
-	initData.Pull       = LL_GPIO_PULL_NO;
-	initData.Alternate  = LL_GPIO_AF_0;
+    initData.Mode       = LL_GPIO_MODE_OUTPUT;
+    initData.Speed      = LL_GPIO_SPEED_FREQ_MEDIUM;
+    initData.OutputType = LL_GPIO_OUTPUT_PUSHPULL;
+    initData.Pull       = LL_GPIO_PULL_NO;
+    initData.Alternate  = LL_GPIO_AF_0;
 
-	//
-	//  We set the state of each GPIO before we set its mode to keep it from
-	//  glitching.  We start with the pins that enable/reset each bridge
-	//  driver phase.  If another processor is controlling the motor (i.e.
-	//  we are snooping its outputs) we do not set our motor control signals
-	//  as outputs.
-	//
-	if (!(SystemConfig::snoopRemoteMotorController))
-	{
+    //
+    //  We set the state of each GPIO before we set its mode to keep it from
+    //  glitching.  We start with the pins that enable/reset each bridge
+    //  driver phase.  If another processor is controlling the motor (i.e.
+    //  we are snooping its outputs) we do not set our motor control signals
+    //  as outputs.
+    //
+    if (!(SystemConfig::snoopRemoteMotorController))
+    {
         disableBridgeOutput();
         initData.Pin = phaseAControlPin;
         LL_GPIO_Init(bridgeDriverControlPort1, &initData);
@@ -98,22 +98,22 @@ void GPIOInterface::initializeDigitalOutputs()
         LL_GPIO_Init(bridgeDriverControlPort1, &initData);
         initData.Pin = phaseCControlPin;
         LL_GPIO_Init(bridgeDriverControlPort2, &initData);
-	}
+    }
 
     //
     //  These control the status LEDs.
     //
-	turnStatusLEDOff();
-	initData.Pin = statusLEDPin;
-	LL_GPIO_Init(statusLEDPort, &initData);
+    turnStatusLEDOff();
+    initData.Pin = statusLEDPin;
+    LL_GPIO_Init(statusLEDPort, &initData);
 
     turnTimingLEDOff();
     initData.Pin = timingLEDPin;
     LL_GPIO_Init(timingLEDPort, &initData);
 
-	turnTriggerLEDOff();
-	initData.Pin = triggerLEDPin;
-	LL_GPIO_Init(triggerLEDPort, &initData);
+    turnTriggerLEDOff();
+    initData.Pin = triggerLEDPin;
+    LL_GPIO_Init(triggerLEDPort, &initData);
 }
 
 ////////////////////////////////////////////////////////////////////////////////

@@ -101,14 +101,14 @@ public:
 
     //
     //  The transforms that bridge the stationary and rotating reference 
-	//  frames require the present angle of the rotating frame.  In the
-	//  case of the motor controller, this angle is usually the motor  
-	//  shaft angle that has been properly aligned with the motor's back
+    //  frames require the present angle of the rotating frame.  In the
+    //  case of the motor controller, this angle is usually the motor
+    //  shaft angle that has been properly aligned with the motor's back
     //  EMF (AKA Theta). This should  be called each computational
     //  frame before the other transforms are utilized.  Note that this
     //  will perform some processor intensive calculations, so it will be
     //  somewhat time consuming.
-	//
+    //
     void provideRotatingFrameAngle (const electricalAngle_rad rotatingFrameAngle);
 
     //
@@ -136,7 +136,7 @@ public:
     //
     //  This performs an inverse Park Transformation.  It transforms the DQ
     //  vector components in the rotating frame to a two-phase Alpha Beta
-	//  representation in the stationary frame.
+    //  representation in the stationary frame.
     //
     void performInverseParkTransformation (
         const float32_t inputD,
