@@ -62,16 +62,16 @@ OSInterface::OSInterface()
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  This creates a new OS thread.  Each thread should call this for itself
+//  This creates a new OS task.  Each task should call this for itself
 //  before the scheduler is started.
 //
 ////////////////////////////////////////////////////////////////////////////////
-void OSInterface::createThread(
-        TaskFunction_t     threadStaticEntryPointPtr,
-        uint32_t           threadPriority,
-        uint32_t           threadStackSize_longwords,
-        void * const       threadParameter,
-        const char * const threadName)
+void OSInterface::createTask(
+        TaskFunction_t     taskStaticEntryPointPtr,
+        uint32_t           taskPriority,
+        uint32_t           taskStackSize_longwords,
+        void * const       taskParameter,
+        const char * const taskName)
 {
     //
     //  We call the RTOS task create function.  For now we don't do anything
@@ -80,11 +80,11 @@ void OSInterface::createThread(
     TaskHandle_t theHandle = nullptr;
 
     const BaseType_t creationResult = xTaskCreate(
-        threadStaticEntryPointPtr,
-        threadName,
-        threadStackSize_longwords,
-        threadParameter,
-        threadPriority,
+        taskStaticEntryPointPtr,
+        taskName,
+        taskStackSize_longwords,
+        taskParameter,
+        taskPriority,
         &theHandle);
 
     if (creationResult != pdPASS)
@@ -114,7 +114,7 @@ void OSInterface::startScheduler()
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  This performs a yielding delay.  The calling thread will block for at least
+//  This performs a yielding delay.  The calling task will block for at least
 //  the indicated time.
 //
 ////////////////////////////////////////////////////////////////////////////////

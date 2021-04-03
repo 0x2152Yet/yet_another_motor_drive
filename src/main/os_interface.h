@@ -38,20 +38,20 @@
 #include "task.h"
 
 //
-//  This namespace defines parameters related to the various threads.
+//  This namespace defines parameters related to the various tasks.
 //
-namespace threadInfo
+namespace taskInfo
 {
     //
-    //  These define the configuration of each thread.
+    //  These define the configuration of each task.
     //
-    const uint32_t MotorControlThreadStackSizeLongwords = 1024U;
-    const uint32_t MotorControlThreadPriority           = configMAX_PRIORITIES - 4U;
-    const char *const  MotorControlThreadName           = "MtrCtrl";
+    const uint32_t MotorControlTaskStackSizeLongwords = 1024U;
+    const uint32_t MotorControlTaskPriority           = configMAX_PRIORITIES - 4U;
+    const char *const  MotorControlTaskName           = "MtrCtrl";
 
-    const uint32_t BackgroundThreadStackSizeLongwords   = 1024U;
-    const uint32_t BackgroundThreadPriority             = MotorControlThreadPriority - 1U;
-    const char *const  BackgroundThreadName             = "BkGnd";
+    const uint32_t BackgroundTaskStackSizeLongwords   = 1024U;
+    const uint32_t BackgroundTaskPriority             = MotorControlTaskPriority - 1U;
+    const char *const  BackgroundTaskName             = "BkGnd";
 }
 
 
@@ -62,21 +62,21 @@ public:
     ~OSInterface() {};
 
     //
-    //  This should be called by each thread (AKA task) to create itself
-    //  before the OS scheduler is started.  This requires the following items:
-    //    A function pointer to the thread's static entry point
-    //    The thread's priority
-    //    The thread's stack size in longwords
+    //  This should be called by each task to create itself before the OS
+    //  scheduler is started.  This requires the following items:
+    //    A function pointer to the task's static entry point
+    //    The task's priority
+    //    The task's stack size in longwords
     //    A parameter to pass the static entry point.  This is usually the
-    //      thread's class "this" pointer.
-    //    A name to give the thread
+    //      task's class "this" pointer.
+    //    A name to give the task
     //
-    void createThread(
-        TaskFunction_t     threadStaticEntryPointPtr,
-        uint32_t           threadPriority,
-        uint32_t           threadStackSize_longwords,
-        void * const       threadParameter,
-        const char * const threadName);
+    void createTask(
+        TaskFunction_t     taskStaticEntryPointPtr,
+        uint32_t           taskPriority,
+        uint32_t           taskStackSize_longwords,
+        void * const       taskParameter,
+        const char * const taskName);
 
     //
     //  This starts the OS scheduler.  This method does not return to the
@@ -85,7 +85,7 @@ public:
     static void startScheduler();
 
     //
-    //  This performs a yielding delay.  The calling thread sleeps for at least
+    //  This performs a yielding delay.  The calling task sleeps for at least
     //  the provided time period.
     //
     static void delay(const time_ms delayTime);

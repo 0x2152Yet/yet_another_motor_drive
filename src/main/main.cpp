@@ -1,3 +1,4 @@
+
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  Yet Another Motor Drive
@@ -37,7 +38,7 @@
 extern "C" {
 #endif
 
-#include "background_thread.h"
+#include "background_task.h"
 #include "FreeRTOS.h"
 #include "gpio_interface.h"
 #include "hw_definitions.h"
@@ -52,7 +53,7 @@ extern "C" {
 //  We create a global instance of the items required by the main initializers
 //  and also of each task.
 //
-BackgroundThread theBackgroundThread;
+BackgroundTask theBackgroundTask;
 GPIOInterface    theGPIOInterface;
 MotorController  theMotorController;
 OSInterface      theOSInterface;
@@ -85,9 +86,9 @@ int main(void)
     thePhysicalInputs.initializePhysicalInputs();
 
     //
-    //  We initialize each thread.
+    //  We initialize each task.
     //
-    theBackgroundThread.initBackgroundThread();
+    theBackgroundTask.initBackgroundTask();
     theMotorController.initializeMotorController();
 
     //

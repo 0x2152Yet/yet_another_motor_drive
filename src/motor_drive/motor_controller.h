@@ -31,10 +31,10 @@
 //
 //  The motor controller has two threads-of-control.  There is the high speed
 //  code that commutates the motor and closes its various loops.  There is a lower
-//  speed thread that manages the motor's high-level state machine and also manages
+//  speed task that manages the motor's high-level state machine and also manages
 //  the interface to the "outside world".  The high speed code executes during
 //  the interrupt that occurs whenever new motor data is available from the ADC.
-//  The low speed thread operates as an endless loop that is scheduled by the
+//  The low speed task operates as an endless loop that is scheduled by the
 //  operating system.
 //
 ////////////////////////////////////////////////////////////////////////////////
@@ -67,9 +67,9 @@ public:
 
     //
     //  This is a static function intended to be provided to the OS at
-    //  initialization.  It invokes the motor controller's lower speed thread.
+    //  initialization.  It invokes the motor controller's lower speed task.
     //
-    static void motorControlThreadEntryPoint(void * const thisPtr);
+    static void motorControlTaskEntryPoint(void * const thisPtr);
 
 private:
 
@@ -80,9 +80,9 @@ private:
     motorStateMachine theMotorStateMachine;
 
     //
-    //  This is the motor controller lower-speed, low priority control thread.
+    //  This is the motor controller lower-speed, low priority control task.
     //
-    void motorControlThreadLoop();
+    void motorControlTaskLoop();
 
     //
     //  These are used to change the speed command based on physical command
@@ -96,7 +96,7 @@ private:
     tickTime_ms         lastSpeedCommandUpdateTime;
 
     //
-    //  These are used to communicate commands between the controller thread
+    //  These are used to communicate commands between the controller task
     //  and the high-speed ISR motor controller.  We use a simple circular
     //  buffer of commands.
     //

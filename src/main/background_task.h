@@ -26,38 +26,38 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Lowest priority application thread
+//  Lowest priority application task
 //
-//  This thread performs background activities that do not have any particular
+//  This task performs background activities that do not have any particular
 //  timing requirement.  The only thing lower priority is the OS idle task.
 //
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-class BackgroundThread
+class BackgroundTask
 {
 public:
-    BackgroundThread();
-    ~BackgroundThread() {};
+    BackgroundTask();
+    ~BackgroundTask() {};
 
     //
     //  This performs initializations required before the scheduler is
     //  started.
     //
-    void initBackgroundThread();
+    void initBackgroundTask();
 
     //
     //  This is a static function intended to be provided to the OS at
     //  initialization.
     //
-    static void backgroundThreadEntryPoint(void * const thisPtr);
+    static void backgroundTaskEntryPoint(void * const thisPtr);
 
 private:
 
     //
-    //  This is the thread's main loop.
+    //  This is the task's main loop.
     //
-    void BackgroundThreadLoop();
+    void BackgroundTaskLoop();
 
 };
 
@@ -65,4 +65,4 @@ private:
 //  We create a single instance of this class that may be referenced
 //  globally.
 //
-extern BackgroundThread theBackgroundThread;
+extern BackgroundTask theBackgroundTask;

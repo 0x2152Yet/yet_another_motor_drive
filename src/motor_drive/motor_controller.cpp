@@ -32,7 +32,7 @@
 //  is performed by code that executes each time a new set of ADC motor data
 //  is available.  The high speed control executes during the high priority ISR
 //  that occurs each time a new set of data is collected.  The lower speed
-//  control executes during a thread that is scheduled by the RTOS.
+//  control executes during a task that is scheduled by the RTOS.
 //
 //  The high speed control commutates the motor and closes its loops (e.g. the
 //  motor current control loop).  It has fairly strict timing requirements
@@ -111,14 +111,14 @@ MotorController::MotorController() :
 void MotorController::initializeMotorController()
 {
     //
-    //  We register the controller thread with the OS.
+    //  We register the controller task with the OS.
     //
-    theOSInterface.createThread(
-        theMotorController.motorControlThreadEntryPoint,
-        threadInfo::MotorControlThreadPriority,
-        threadInfo::MotorControlThreadStackSizeLongwords,
+    theOSInterface.createTask(
+        theMotorController.motorControlTaskEntryPoint,
+        taskInfo::MotorControlTaskPriority,
+        taskInfo::MotorControlTaskStackSizeLongwords,
         this,
-        threadInfo::MotorControlThreadName);
+        taskInfo::MotorControlTaskName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -193,16 +193,16 @@ void MotorController::updateMotorController()
 //  motor controller class.  It will call the main loop by reference.
 //
 ////////////////////////////////////////////////////////////////////////////////
-void MotorController::motorControlThreadEntryPoint(void * const thisPtr)
+void MotorController::motorControlTaskEntryPoint(void * const thisPtr)
 {
     if (thisPtr != nullptr)
     {
         //
         //  We call the main loop using the passed in "this" pointer.
         //
-        MotorController *const thisThreadPointer =
+        MotorController *const thisTaskPointer =
             reinterpret_cast<MotorController *const>(thisPtr);
-        thisThreadPointer->motorControlThreadLoop();
+        thisTaskPointer->motorControlTaskLoop();
     }
 
     //
@@ -217,13 +217,13 @@ void MotorController::motorControlThreadEntryPoint(void * const thisPtr)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Main loop for the motor control lower-speed Thread
+//  Main loop for the motor control lower-speed task
 //
-//  This is invoked by the static thread entry point.  It is scheduled by
+//  This is invoked by the static task entry point.  It is scheduled by
 //  the RTOS and never exits.
 //
 ////////////////////////////////////////////////////////////////////////////////
-void MotorController::motorControlThreadLoop()
+void MotorController::motorControlTaskLoop()
 {
     uint32_t statusBlinkCounter = 0U;
 
@@ -398,7 +398,7 @@ void MotorController::determineSpeedCommand()
 ////////////////////////////////////////////////////////////////////////////////
 //
 //  This adds a new command to the command buffer.  This should only be called
-//  by the low-priority controller thread.
+//  by the low-priority controller task.
 //
 ////////////////////////////////////////////////////////////////////////////////
 void MotorController::addCommandToBuffer(

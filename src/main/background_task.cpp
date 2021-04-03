@@ -26,13 +26,14 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Lowest priority application thread
+//  Lowest priority application task
 //
-//  This thread performs background activities that do not have any particular
+//  This task performs background activities that do not have any particular
 //  timing requirement.  The only thing lower priority is the OS idle task.
 //
 ////////////////////////////////////////////////////////////////////////////////
-#include "background_thread.h"
+#include "background_task.h"
+
 #include "data_logger.h"
 #include "os_interface.h"
 #include "uart_interface.h"
@@ -50,7 +51,7 @@ UARTInterface theUARTInterface;
 //  Class constructor
 //
 ////////////////////////////////////////////////////////////////////////////////
-BackgroundThread::BackgroundThread()
+BackgroundTask::BackgroundTask()
 {
 }
 
@@ -59,17 +60,17 @@ BackgroundThread::BackgroundThread()
 //  Performs initializations required before the scheduler is started
 //
 ////////////////////////////////////////////////////////////////////////////////
-void BackgroundThread::initBackgroundThread()
+void BackgroundTask::initBackgroundTask()
 {
     //
-    //  We register this thread with the OS.
+    //  We register this task with the OS.
     //
-    theOSInterface.createThread(
-        theBackgroundThread.backgroundThreadEntryPoint,
-        threadInfo::BackgroundThreadPriority,
-        threadInfo::BackgroundThreadStackSizeLongwords,
+    theOSInterface.createTask(
+        theBackgroundTask.backgroundTaskEntryPoint,
+        taskInfo::BackgroundTaskPriority,
+        taskInfo::BackgroundTaskStackSizeLongwords,
         this,
-        threadInfo::BackgroundThreadName);
+        taskInfo::BackgroundTaskName);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -77,19 +78,19 @@ void BackgroundThread::initBackgroundThread()
 //  Static entry point required by the OS
 //
 //  This should be provided a pointer to the actual instance of the
-//  thread class.  It will call the main loop by reference.
+//  task class.  It will call the main loop by reference.
 //
 ////////////////////////////////////////////////////////////////////////////////
-void BackgroundThread::backgroundThreadEntryPoint(void * const thisPtr)
+void BackgroundTask::backgroundTaskEntryPoint(void * const thisPtr)
 {
     if (thisPtr != nullptr)
     {
         //
         //  We call the main loop using the passed in "this" pointer.
         //
-        BackgroundThread *const thisTaskPointer =
-            reinterpret_cast<BackgroundThread *const>(thisPtr);
-        thisTaskPointer->BackgroundThreadLoop();
+        BackgroundTask *const thisTaskPointer =
+            reinterpret_cast<BackgroundTask *const>(thisPtr);
+        thisTaskPointer->BackgroundTaskLoop();
     }
 
     //
@@ -104,13 +105,13 @@ void BackgroundThread::backgroundThreadEntryPoint(void * const thisPtr)
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Main loop for the Background Thread
+//  Main loop for the Background task
 //
-//  This is invoked by the static thread entry point.  It is scheduled by
+//  This is invoked by the static task entry point.  It is scheduled by
 //  the RTOS and never exits
 //
 ////////////////////////////////////////////////////////////////////////////////
-void BackgroundThread::BackgroundThreadLoop()
+void BackgroundTask::BackgroundTaskLoop()
 {
 
     //

@@ -91,7 +91,7 @@ VPATH = \
 CPP_SRC_FILES := \
 adc_conversions.cpp \
 adc_interface.cpp \
-background_thread.cpp \
+background_task.cpp \
 c_startup.cpp \
 dac_interface.cpp \
 data_logger.cpp \
