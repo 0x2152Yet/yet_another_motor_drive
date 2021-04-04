@@ -45,6 +45,11 @@
 //
 UARTInterface theUARTInterface;
 
+//
+//  We print these at startup.
+//
+extern volatile int buildCount;
+extern volatile char absoluteBuildTime[];
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -120,6 +125,11 @@ void BackgroundTask::BackgroundTaskLoop()
     theUARTInterface.initializeUARTInterface();
 
     //
+    //  We display build date, time, etc.
+    //
+    printBuildInfo();
+
+    //
     //  This is the main background loop.
     //
     while (true)
@@ -137,3 +147,22 @@ void BackgroundTask::BackgroundTaskLoop()
         theDataLogger.printLowRateItems();
     }
 }
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Prints general build information
+//
+////////////////////////////////////////////////////////////////////////////////
+void BackgroundTask::printBuildInfo()
+{
+    printf("\r\n\n");
+    printf("          Yet Another Motor Drive         \r\n");
+    printf("    Copyright (c) 2021, Michael F. Kaufman\r\n");
+    printf("            0xEB90, 0x2152-yet.           \r\n\n");
+
+    printf("Build time  : %s\r\n", absoluteBuildTime);
+    printf("Build count : %d\r\n\n", static_cast<int>(buildCount));
+
+    fflush(stdout);
+}
+

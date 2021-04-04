@@ -59,6 +59,11 @@ private:
     //
     void BackgroundTaskLoop();
 
+    //
+    //  This prints build information at startup.
+    //
+    void printBuildInfo();
+
 };
 
 //
