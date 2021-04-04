@@ -1,0 +1,12 @@
+# Ignore all build output
+build/depend/
+build/obj/
+build/motor_drive_image/
+
+# Ignore Eclipse files
+.cproject
+.project
+.settings/
+
+# Ignore MACOS files
+.DS_Store
