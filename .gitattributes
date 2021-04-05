@@ -1,0 +1,4 @@
+src/free_rtos_source/* linguist-vendored
+src/processor_specific/* linguist-vendored
+src/CMSIS/* linguist-vendored
+
