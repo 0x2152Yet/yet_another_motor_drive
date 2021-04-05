@@ -1,4 +1,4 @@
 // buildcnt.cpp
 // Auto Generated
-volatile int buildCount = 10;
+volatile int buildCount = 11;
 volatile char absoluteBuildTime[] = __TIMESTAMP__;

@@ -68,7 +68,8 @@ private:
     bool sendAddress(const uint8_t deviceAddress, const bool isWrite);
     bool sendData(const uint8_t *const dataToSend, const uint8_t numBytesToSend);
     bool waitForIdleBus();
-    bool waitForAck();
+    bool waitForStartSent();
+    bool waitForByteSent();
 
 };
 

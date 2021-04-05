@@ -109,7 +109,7 @@ void I2CInterface::writeToI2CDevice(
 {
     using namespace I2CDefinitions;
 
-    bool okSoFar = false;
+    bool okSoFar;
 
     //
     //  We make sure we actually have data to send.  If so,
@@ -120,6 +120,19 @@ void I2CInterface::writeToI2CDevice(
         LL_I2C_Enable(theI2C);
         okSoFar = waitForIdleBus();
     }
+    else
+    {
+        okSoFar = false;
+    }
+
+    if (okSoFar)
+    {
+        //
+        //  We send a start condition.
+        //
+        LL_I2C_GenerateStartCondition(theI2C);
+        okSoFar = waitForStartSent();
+    }
 
     if (okSoFar)
     {
@@ -127,7 +140,6 @@ void I2CInterface::writeToI2CDevice(
         //  We address the device.  This will also verify
         //  the device's ack.
         //
-        LL_I2C_GenerateStartCondition(theI2C);
         okSoFar = sendAddress(deviceAddress, true);
     }
 
@@ -139,16 +151,8 @@ void I2CInterface::writeToI2CDevice(
         uint32_t theByte = 0U;
         do
         {
-            //
-            //  Note that we have to make sure we clear any prior ack
-            //  failure before we do any transfer that expects an ack.
-            //  If we let the wait-for-ack method do this, we would have
-            //  a race condition if we were swapped out by the OS between
-            //  the write and checking for the ack.
-            //
-            LL_I2C_ClearFlag_AF(theI2C);
             LL_I2C_TransmitData8(theI2C, dataToSend[theByte]);
-            okSoFar = waitForAck();
+            okSoFar = waitForByteSent();
 
             theByte++;
 
@@ -170,7 +174,6 @@ void I2CInterface::writeToI2CDevice(
 ////////////////////////////////////////////////////////////////////////////////
 bool I2CInterface::sendAddress(const uint8_t deviceAddress, const bool isWrite)
 {
-    bool didAddress;
     using namespace I2CDefinitions;
 
     uint8_t addressToSend = deviceAddress;
@@ -185,29 +188,144 @@ bool I2CInterface::sendAddress(const uint8_t deviceAddress, const bool isWrite)
 
     LL_I2C_ClearFlag_AF(theI2C);
     LL_I2C_TransmitData8(theI2C, addressToSend);
-    didAddress = waitForAck();
 
-    return didAddress;
+    //
+    //  Now we wait for the device to ack its address.  This is a little
+    //  different than the ack for a normal transfer.
+    //
+    bool addressAckReceived = false;
+    tickTime_us startTime = theTimers.getHighResTime();
+    tickTime_us timeWaiting;
+    do
+    {
+        if (LL_I2C_IsActiveFlag_ADDR(theI2C) != 0U)
+        {
+            addressAckReceived = true;
+        }
+
+        timeWaiting = theTimers.getHighResDelta(startTime);
+
+    } while ((!addressAckReceived) &&
+             (timeWaiting < I2CConstants::maxTimeForI2CTransfer));
+
+    //
+    //  We have a special case:  if the calling task was swapped out, the above
+    //  check could have timed out.  We do one more check just to be sure things
+    //  really failed.
+    //
+    if (!addressAckReceived)
+    {
+        if (LL_I2C_IsActiveFlag_ADDR(theI2C) != 0U)
+        {
+            addressAckReceived = true;
+        }
+    }
+
+    return addressAckReceived;
 
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Waits for the bus to be idle.
+//  Waits for the I2C bus to become idle
 //
 ////////////////////////////////////////////////////////////////////////////////
 bool I2CInterface::waitForIdleBus()
 {
-    return false;
+    bool busIdle = false;
+    tickTime_us startTime = theTimers.getHighResTime();
+    tickTime_us timeWaiting;
+    do
+    {
+        if (LL_I2C_IsActiveFlag_BUSY(I2CDefinitions::theI2C) == 0U)
+        {
+            busIdle = true;
+        }
+
+        timeWaiting = theTimers.getHighResDelta(startTime);
+
+    } while ((!busIdle) &&
+             (timeWaiting < I2CConstants::maxTimeForI2CTransfer));
+
+    //
+    //  We have a special case:  if the calling task was swapped out, the above
+    //  check could have timed out.  We do one more check just to be sure things
+    //  really failed.
+    //
+    if (!busIdle)
+    {
+        if (LL_I2C_IsActiveFlag_BUSY(I2CDefinitions::theI2C) == 0U)
+        {
+            busIdle = true;
+        }
+    }
+
+    return busIdle;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Waits for a device to acknowledge a transfer.
+//  Waits for the a start condition to complete
 //
 ////////////////////////////////////////////////////////////////////////////////
-bool I2CInterface::waitForAck()
+bool I2CInterface::waitForStartSent()
 {
-    return false;
+    bool startSent = false;
+    tickTime_us startTime = theTimers.getHighResTime();
+    tickTime_us timeWaiting;
+    do
+    {
+        if (LL_I2C_IsActiveFlag_SB(I2CDefinitions::theI2C) != 0U)
+        {
+            startSent = true;
+        }
+
+        timeWaiting = theTimers.getHighResDelta(startTime);
+
+    } while ((!startSent) &&
+             (timeWaiting < I2CConstants::maxTimeForI2CTransfer));
+
+    if (!startSent)
+    {
+        if (LL_I2C_IsActiveFlag_SB(I2CDefinitions::theI2C) != 0U)
+        {
+            startSent = true;
+        }
+    }
+
+    return startSent;
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Waits for a byte write to complete
+//
+////////////////////////////////////////////////////////////////////////////////
+bool I2CInterface::waitForByteSent()
+{
+    bool byteSent = false;
+    tickTime_us startTime = theTimers.getHighResTime();
+    tickTime_us timeWaiting;
+    do
+    {
+        if (LL_I2C_IsActiveFlag_BTF(I2CDefinitions::theI2C) != 0U)
+        {
+            byteSent = true;
+        }
+
+        timeWaiting = theTimers.getHighResDelta(startTime);
+
+    } while ((!byteSent) &&
+             (timeWaiting < I2CConstants::maxTimeForI2CTransfer));
+
+    if (!byteSent)
+    {
+        if (LL_I2C_IsActiveFlag_BTF(I2CDefinitions::theI2C) != 0U)
+        {
+            byteSent = true;
+        }
+    }
+
+    return byteSent;
 }
 
