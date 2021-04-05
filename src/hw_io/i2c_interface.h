@@ -26,20 +26,54 @@
 //
 ////////////////////////////////////////////////////////////////////////////////
 //
-//  Defines the processor and includes files specific to the processor
+//  Defines the interface to the processor's I2C bus
+//
+//  At present, this is a very simply interface that only supports writing
+//  to devices on the bus.
+//
+//  This is a polling interface.  Some of the calls may take a while to return.
 //
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "stm32f4xx_ll_adc.h"
-#include "stm32f4xx_ll_bus.h"
-#include "stm32f4xx_ll_dac.h"
-#include "stm32f4xx_ll_dma.h"
-#include "stm32f4xx_ll_exti.h"
-#include "stm32f4xx_ll_gpio.h"
-#include "stm32f4xx_ll_i2c.h"
-#include "stm32f4xx_ll_rcc.h"
-#include "stm32f4xx_ll_system.h"
-#include "stm32f4xx_ll_tim.h"
-#include "stm32f4xx_ll_usart.h"
-#include "system_stm32f4xx.h"
+#include "global_definitions.h"
+#include "processor.h"
+
+class I2CInterface
+{
+public:
+    I2CInterface();
+    ~I2CInterface() {};
+
+    //
+    //  This prepares the I2C interface for operation.
+    //
+    void initializeI2CInterface();
+
+    //
+    //  This writes a buffer of bytes to an I2C device.  The device address
+    //  should be in an 8 bit form.  In other words, the LSB should not be
+    //  part of the device address.
+    //
+    void writeToI2CDevice(
+        const uint8_t  deviceAddress,
+        const uint8_t  *const dataToSend,
+        const uint32_t numBytesToSend);
+
+private:
+
+    //
+    //  These manage the portions of the transfer.
+    //
+    bool sendAddress(const uint8_t deviceAddress, const bool isWrite);
+    bool sendData(const uint8_t *const dataToSend, const uint8_t numBytesToSend);
+    bool waitForIdleBus();
+    bool waitForAck();
+
+};
+
+//
+//  We create a single instance of this class that may be referenced
+//  globally.
+//
+extern I2CInterface theI2CInterface;

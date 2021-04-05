@@ -96,6 +96,7 @@ private:
     void initializeAnalogPins();
     void initializeTimerPins();
     void initializeUARTPins();
+    void initializeI2CPins();
 };
 
 //

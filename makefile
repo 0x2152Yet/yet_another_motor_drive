@@ -97,6 +97,7 @@ dac_interface.cpp \
 data_logger.cpp \
 debouncer.cpp \
 gpio_interface.cpp \
+i2c_interface.cpp \
 low_pass_filter.cpp \
 main.cpp \
 motor_angle_n_speed.cpp \
@@ -130,6 +131,7 @@ stm32f4xx_ll_dma.c \
 stm32f4xx_ll_exti.c \
 stm32f4xx_ll_rcc.c \
 stm32f4xx_ll_gpio.c \
+stm32f4xx_ll_i2c.c \
 stm32f4xx_ll_tim.c \
 stm32f4xx_ll_usart.c \
 stream_buffer.c \

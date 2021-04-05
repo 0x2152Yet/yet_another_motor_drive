@@ -41,6 +41,7 @@ extern "C" {
 #include "background_task.h"
 #include "FreeRTOS.h"
 #include "gpio_interface.h"
+#include "i2c_interface.h"
 #include "hw_definitions.h"
 #include "motor_controller.h"
 #include "os_interface.h"
@@ -53,8 +54,9 @@ extern "C" {
 //  We create a global instance of the items required by the main initializers
 //  and also of each task.
 //
-BackgroundTask theBackgroundTask;
+BackgroundTask   theBackgroundTask;
 GPIOInterface    theGPIOInterface;
+I2CInterface     theI2CInterface;
 MotorController  theMotorController;
 OSInterface      theOSInterface;
 PhysicalInputs   thePhysicalInputs;
@@ -138,6 +140,7 @@ static void powerOnPeripherals(void)
     LL_ADC_DeInit(ADCDefinitions::theADC1);
     LL_ADC_DeInit(ADCDefinitions::theADC2);
     LL_ADC_DeInit(ADCDefinitions::theADC3);
+    LL_I2C_DeInit(I2CDefinitions::theI2C);
 
     //
     //  We power on the GPIO peripherals.
@@ -178,6 +181,11 @@ static void powerOnPeripherals(void)
     //
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
+
+    //
+    //  This provides the clock for the I2C peripheral.
+    //
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C2);
 
     //
     //  This support general configuration items (external interrupts, etc.)

@@ -61,6 +61,7 @@ void GPIOInterface::initializeGPIOInterface()
     initializeAnalogPins();
     initializeTimerPins();
     initializeUARTPins();
+    initializeI2CPins();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -335,6 +336,35 @@ void GPIOInterface::initializeUARTPins()
     initData.Pull = LL_GPIO_PULL_UP;
     initData.Pin  = uartRXPin;
     LL_GPIO_Init(uartPort, &initData);
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  Initializes pins associated with the I2C peripheral.
+//
+////////////////////////////////////////////////////////////////////////////////
+void GPIOInterface::initializeI2CPins()
+{
+    using namespace GPIODefinitions;
+
+    LL_GPIO_InitTypeDef initData;
+
+    LL_GPIO_StructInit(&initData);
+
+    initData.Mode       = LL_GPIO_MODE_ALTERNATE;
+    initData.Speed      = LL_GPIO_SPEED_FREQ_MEDIUM;
+    initData.OutputType = LL_GPIO_OUTPUT_OPENDRAIN;
+    initData.Pull       = LL_GPIO_PULL_NO;
+    initData.Alternate  = I2CAlternateFunction;
+
+    //
+    //  We configure each pin that is used for the I2C.
+    //
+    initData.Pin  = I2CDataPin;
+    LL_GPIO_Init(I2CBusPort, &initData);
+
+    initData.Pin  = I2CClockPin;
+    LL_GPIO_Init(I2CBusPort, &initData);
 }
 
 

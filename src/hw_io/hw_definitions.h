@@ -61,7 +61,6 @@ namespace GPIODefinitions
     GPIO_TypeDef *const bridgeDriverControlPort2 = GPIOF;
     const uint32_t phaseCControlPin = LL_GPIO_PIN_12;
 
-
     //
     //  These are the ADC inputs.
     //
@@ -129,6 +128,14 @@ namespace GPIODefinitions
     const uint32_t onBoardpushButtonPin        = LL_GPIO_PIN_13;
     GPIO_TypeDef *const externalPushButtonPort = GPIOB;
     const uint32_t externalPushButtonPin       = LL_GPIO_PIN_11;
+
+    //
+    //  These are the pins for the I2C bus
+    //
+    GPIO_TypeDef *const I2CBusPort       = GPIOB;
+    const uint32_t I2CAlternateFunction  = LL_GPIO_AF_4;
+    const uint32_t I2CClockPin           = LL_GPIO_PIN_8;
+    const uint32_t I2CDataPin            = LL_GPIO_PIN_9;
 
     //
     //  For testing, we configure an external trigger for the
@@ -231,5 +238,15 @@ namespace UARTDefinitions
     //
     USART_TypeDef *const testSupportUART = USART3;
     const uint32_t testSupportBaudRate   = 921600U;
+}
+
+//
+//  These define how we use the I2C bus. For now, this is just for test
+//  support.
+//
+namespace I2CDefinitions
+{
+    I2C_TypeDef *const theI2C = I2C2;
+    const kiloBitsPerSecond I2CClockSpeed = 100U;
 }
 
