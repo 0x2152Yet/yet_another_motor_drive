@@ -1,12 +1,13 @@
 ## Yet Another Motor Drive
-Permanent magnet DC motor field effect motor drive software that supports both  
-sensored and sensor-less operation.
+Field-oriented control motor drive software for 3-phase permanent magnet
+synchronous motors that supports both sensored and sensor-less operation.
 
 ### Overview
-This project contains the software that implements the field effect control (FOC)
-of a permanent magnet DC (PMDC) motor. Support is included for controlling
-the motor either using a physical shaft encoder ("sensors") or by estimating the
-motor's shaft angle using other sensed data ("sensor-less").  
+This project contains the software that implements the field-oriented control 
+(FOC) of a 3-phase permanent magnet synchronous motor (PMSM). Support is 
+included for controlling the motor either using a physical shaft encoder 
+("sensors") or by estimating the motor's shaft angle using other sensed data 
+("sensor-less").  
 
 At present, this software is configured to operate on an STMicro STM32F439 processor.
 The supported motor is a Segway I Series PT motor (these can be found on eBay).
@@ -26,8 +27,8 @@ constraints of the target processor.  These software examples are often marvels
 of efficiency but they can often be rather difficult to follow.
 
 This motor drive project is targeted to a processor that is rather more capable 
-than the processors often used to control PMDC motors.  The software can take
-advantage of this extra capability to concentrate on the PMDC FOC algorithms 
+than the processors often used to control PMSM motors.  The software can take
+advantage of this extra capability to concentrate on the PMSM FOC algorithms 
 themselves without having to add the extra complexity required to fit within a
 smaller processor's footprint.  As a result, the motor control portion of this
 software:
@@ -35,8 +36,8 @@ software:
   * Performs most of its calculations in floating point
   * Uses engineering units for most values.  For example, bus voltage is expressed
     in volts with 1.0 volt being represented by the value 1.0
-  * To the largest extent possible, processor specific items are reserved for the
-    low level hardware interfaces and are not present in the motor control algorithms
+  * Where possible, processor specific items are reserved for the low level
+    hardware interfaces and are not present in the motor control algorithms
     themselves
     
 ### Status and Future Updates

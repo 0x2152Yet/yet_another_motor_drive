@@ -28,7 +28,7 @@
 //
 //  Defines the interface to the processor's PWM generator
 //
-//  This class controls a fairly "textbook" BLDC motor drive center-based
+//  This class controls a fairly "textbook" PMSM motor drive center-based
 //  PWM.  It supports 3 complimentary outputs with a blanking period (AKA dead
 //  band).  In addition it generates a signal to start ADC sampling at the center
 //  of the PWM  pulse-train.  It is up to other code to configure the IO pins, etc.

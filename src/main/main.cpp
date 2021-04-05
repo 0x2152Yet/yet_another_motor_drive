@@ -115,7 +115,7 @@ static void powerOnPeripherals(void)
     //
     //  Before we power on the peripherals, we "de-init" them.  In many cases,
     //  the de-init shuts off the clocks, so if we do it after we enable the
-    //  clocks, things don't work as expected.
+    //  clocks, things may not work as expected.
     //
     LL_GPIO_DeInit(GPIOA);
     LL_GPIO_DeInit(GPIOB);
@@ -135,12 +135,6 @@ static void powerOnPeripherals(void)
     LL_USART_DeInit(UARTDefinitions::testSupportUART);
     LL_DMA_DeInit(DMADefinitions::UARTDMA, DMADefinitions::UARTTxDMAStream);
     LL_DMA_DeInit(DMADefinitions::UARTDMA, DMADefinitions::UARTRxDMAStream);
-
-    //
-    //  Regardless of which ADCs are in use, one must always de-init all
-    //  three of them or the vendor interface code will not properly initialize
-    //  any of them.  We use all three so that is not an issue.
-    //
     LL_ADC_DeInit(ADCDefinitions::theADC1);
     LL_ADC_DeInit(ADCDefinitions::theADC2);
     LL_ADC_DeInit(ADCDefinitions::theADC3);
