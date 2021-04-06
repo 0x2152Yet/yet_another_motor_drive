@@ -49,7 +49,7 @@ namespace I2CConstants
     //
     //  This is the maximum time we will wait for a transfer to complete.
     //
-    const tickTime_us maxTimeForI2CTransfer = 5000U;
+    const tickTime_us maxTimeForI2CTransfer = 1000U;
 
     //
     //  This bit being cleared in a device address indicates we are writing to
@@ -94,6 +94,9 @@ void I2CInterface::initializeI2CInterface()
 
     LL_I2C_Init(theI2C, &I2CSettings);
 
+    //LL_I2C_Enable(theI2C);
+    //LL_I2C_GenerateStopCondition(theI2C);
+
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -113,11 +116,18 @@ void I2CInterface::writeToI2CDevice(
 
     //
     //  We make sure we actually have data to send.  If so,
-    //  we enable the bus and make sure its idle.
+    //  we enable the bus, clear any prior data or status
+    //  and make sure its idle.
     //
     if ((dataToSend != nullptr) && (numBytesToSend > 0U))
     {
         LL_I2C_Enable(theI2C);
+
+        (void)LL_I2C_ReceiveData8(theI2C);
+        (void)LL_I2C_ReceiveData8(theI2C);
+        (void)theI2C->SR1;
+        (void)theI2C->SR2;
+
         okSoFar = waitForIdleBus();
     }
     else
@@ -160,7 +170,7 @@ void I2CInterface::writeToI2CDevice(
     }
 
     //
-    //  We put a stop condition on the bus and disable the peripheral
+    //  We put out a stop condition on the bus and disable the peripheral
     //  regardless of how the above went.
     //
     LL_I2C_GenerateStopCondition(theI2C);
@@ -187,7 +197,7 @@ bool I2CInterface::sendAddress(const uint8_t deviceAddress, const bool isWrite)
     }
 
     LL_I2C_ClearFlag_AF(theI2C);
-    LL_I2C_TransmitData8(theI2C, addressToSend);
+    theI2C->DR = addressToSend;
 
     //
     //  Now we wait for the device to ack its address.  This is a little
@@ -221,8 +231,13 @@ bool I2CInterface::sendAddress(const uint8_t deviceAddress, const bool isWrite)
         }
     }
 
-    return addressAckReceived;
+    //
+    //  We must clear SR2 after sending an address or the I2C peripheral will
+    //  hold the clock low.
+    //
+    (void)theI2C->SR2;
 
+    return addressAckReceived;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

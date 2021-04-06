@@ -88,6 +88,12 @@ int main(void)
     thePhysicalInputs.initializePhysicalInputs();
 
     //
+    //  This provides the clock for the I2C peripheral.
+    //
+    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C1);
+
+
+    //
     //  We initialize each task.
     //
     theBackgroundTask.initBackgroundTask();
@@ -181,11 +187,6 @@ static void powerOnPeripherals(void)
     //
     LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_USART3);
     LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_DMA1);
-
-    //
-    //  This provides the clock for the I2C peripheral.
-    //
-    LL_APB1_GRP1_EnableClock(LL_APB1_GRP1_PERIPH_I2C2);
 
     //
     //  This support general configuration items (external interrupts, etc.)

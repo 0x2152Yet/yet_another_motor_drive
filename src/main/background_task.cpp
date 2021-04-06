@@ -134,7 +134,7 @@ void BackgroundTask::BackgroundTaskLoop()
     //
     while (true)
     {
-        OSInterface::delay(100U);
+        OSInterface::delay(2U);
 
         //
         //  We print the contents of the data log if there is data in it.

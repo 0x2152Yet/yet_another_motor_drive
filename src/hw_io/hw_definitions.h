@@ -246,7 +246,7 @@ namespace UARTDefinitions
 //
 namespace I2CDefinitions
 {
-    I2C_TypeDef *const theI2C = I2C2;
-    const kiloBitsPerSecond I2CClockSpeed = 100U;
+    I2C_TypeDef *const theI2C = I2C1;
+    const bitsPerSecond I2CClockSpeed = 100000U;
 }
 

@@ -100,7 +100,7 @@ typedef float32_t time_us;
 typedef uint32_t tickTime_s;
 typedef uint32_t tickTime_ms;
 typedef uint32_t tickTime_us;
-typedef uint32_t kiloBitsPerSecond;
+typedef uint32_t bitsPerSecond;
 
 //
 //  These define types of other items.

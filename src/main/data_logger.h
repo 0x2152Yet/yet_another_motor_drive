@@ -130,6 +130,13 @@ private:
     float32_t   lowRateItem3;
     float32_t   lowRateItem4;
     float32_t   lowRateItem5;
+
+    //
+    //  These are used to track the motor position LED display.
+    //
+    float32_t lowRatePosition;
+    uint8_t lastPositionLED;
+
 };
 
 //

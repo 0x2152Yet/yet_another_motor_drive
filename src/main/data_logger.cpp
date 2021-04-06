@@ -46,6 +46,7 @@
 #include "data_logger.h"
 #include "global_constants.h"
 #include "global_definitions.h"
+#include "i2c_interface.h"
 #include "motor_angle_n_speed.h"
 #include "motor_controller.h"
 #include "motor_state_machine.h"
@@ -57,6 +58,33 @@
 #include <math.h>
 #include <string.h>
 #include <stdio.h>
+
+//
+//  This namespace describes the interface to the LED position display.
+//
+namespace positionDisplayConsts
+{
+    //
+    //  This is the address of the LED controller on the I2C bus.
+    //
+    const uint8_t LEDControllerAddress = 0x2AU;
+
+    //
+    //  Each LED in the ring is controlled by setting a brightness value in
+    //  a register.
+    //
+    const uint8_t numberOfLEDs                 = 24U;
+    const uint8_t maxLEDOffset                 = numberOfLEDs - 1U;
+    const uint8_t LED0BrightnessControlAddress = 0x0AU;
+    const uint8_t LED0CurrentControlAddress    = 0x22U;
+    const uint8_t LEDOffDutyCycle              = 0U;
+    const uint8_t DefaultDutyCycle             = 255U;
+    const uint8_t DefaultCurrentGain           = 128U;
+
+    const uint8_t bytesInLEDCommand = 2U;
+    const uint8_t registerIndex     = 0U;
+    const uint8_t valueIndex        = 1U;
+}
 
 ////////////////////////////////////////////////////////////////////////////////
 //
@@ -76,8 +104,9 @@ dataLogger::dataLogger() :
     lowRateItem2(0.0F),
     lowRateItem3(0.0F),
     lowRateItem4(0.0F),
-    lowRateItem5(0.0F)
-
+    lowRateItem5(0.0F),
+    lowRatePosition(0.0F),
+    lastPositionLED(0)
 {
     memset(logData, 0U, sizeof(logData));
 }
@@ -90,10 +119,17 @@ dataLogger::dataLogger() :
 ////////////////////////////////////////////////////////////////////////////////
 void dataLogger::initializeDataLog()
 {
+    using namespace positionDisplayConsts;
     //
     //  We prepare the DAC hardware.
     //
     theDACInterface.initializeDACInterface();
+
+    //
+    //  We prepare the I2C interface for the LED position display.
+    //
+    theI2CInterface.initializeI2CInterface();
+
 
     //
     //  We configure the DAC for the data we will be viewing.  This must be
@@ -107,6 +143,20 @@ void dataLogger::initializeDataLog()
     theDACInterface.setDAC2ConversionFactors(0.0, 2500.0);  // Speed
     //theDACInterface.setDAC1ConversionFactors(0.0, GlobalConstants::twoPi);  // Shaft angle
     //theDACInterface.setDAC2ConversionFactors(0.0, GlobalConstants::twoPi);  // Shaft angle
+
+    //
+    //  We set the default current gain for each position LED.
+    //
+    uint8_t LEDCurrentCommand[bytesInLEDCommand] =
+        {LED0CurrentControlAddress, DefaultCurrentGain};
+
+    for (uint8_t theLED = 0; theLED < numberOfLEDs; theLED++)
+    {
+        theI2CInterface.writeToI2CDevice(
+            LEDControllerAddress, LEDCurrentCommand, bytesInLEDCommand);
+
+        (LEDCurrentCommand[registerIndex])++;
+    }
 
 }
 
@@ -192,6 +242,9 @@ void dataLogger::updateDataLog()
         lowRateItemDownsampleCounter++;
     }
 
+    lowRatePosition =
+        theMotorController.theMotorStateMachine.motorAngleAndSpeedManager.presentAnalogHallAngle;
+
     //
     //  For now, the DAC outputs are hard-coded.  Make sure you update the
     //  DAC scale factors in initializeDataLog for the data you are sending.
@@ -265,6 +318,8 @@ void dataLogger::printDataLogBuffer()
 ////////////////////////////////////////////////////////////////////////////////
 void dataLogger::printLowRateItems()
 {
+    using namespace positionDisplayConsts;
+
     //
     //  When there is new low rate data, we print it.  Note that by printing
     //  a carriage return with no line feed, we get a cool updating display
@@ -283,8 +338,42 @@ void dataLogger::printLowRateItems()
         lastLowRateItemUpdateCounter = lowRateItemUpdateCounter;
 
         fflush(stdout);
-
     }
+    else
+    {
+        //
+        //  We light an LED based on the motor's position.
+        //
+        const float32_t radiansPerLED = GlobalConstants::twoPi / numberOfLEDs;
+        uint8_t thisLED =
+            static_cast<uint8_t>((lowRatePosition / radiansPerLED) + 0.5F);
+
+        if (thisLED > maxLEDOffset)
+        {
+            thisLED = maxLEDOffset;
+        }
+
+        thisLED = thisLED + LED0BrightnessControlAddress;
+
+        if (thisLED != lastPositionLED)
+        {
+            uint8_t lightLEDCommand[bytesInLEDCommand] = {thisLED, DefaultDutyCycle};
+
+            theI2CInterface.writeToI2CDevice(
+                LEDControllerAddress, lightLEDCommand, bytesInLEDCommand);
+
+            if (lastPositionLED != 0U)
+            {
+                lightLEDCommand[registerIndex] = lastPositionLED;
+                lightLEDCommand[valueIndex]    = LEDOffDutyCycle;
+                theI2CInterface.writeToI2CDevice(
+                    LEDControllerAddress, lightLEDCommand, bytesInLEDCommand);
+            }
+
+            lastPositionLED = thisLED;
+        }
+    }
+
 }
 
 
