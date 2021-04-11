@@ -333,7 +333,10 @@ void MotorController::determineSpeedCommand()
 
         if (MotorConstants::changeDirectionOnButtonHold)
         {
-            addCommandToBuffer(startLoggingCommand);
+            if (MotorConstants::latchLogOnDirectionChange)
+            {
+                addCommandToBuffer(startLoggingCommand);
+            }
             speedToggleCommandTime = theTimers.getMedResTime();
         }
         else

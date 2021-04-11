@@ -237,6 +237,20 @@ namespace MotorConstants
     const electricalSpeed_RPM speedCommandGain          = 10.0F;
     const electricalSpeed_RPM speedCommandDeadband      = 15.0F;
     const bool changeDirectionOnButtonHold              = true;
+    const bool latchLogOnDirectionChange                = false;
     const tickTime_ms timeToDelayBeforeSpeedToggle      = 100U;
     const tickTime_ms speedCommandUpdateTime            = 100U;
+
+    //
+    //  The external speed command encoder includes a ring of LEDs.  Just for
+    //  fun, we light the LED that corresponds to the motor's shaft angle.
+    //  We actually compute an angle based on a reduced version of the motor
+    //  speed because at most motor speeds, the display update is too slow
+    //  to keep up with the motor (it does provide a fine example of aliasing).
+    //  Note that if the particular encoder is not used in the system, it is
+    //  best if this feature is disabled as the failed attempts to communicate
+    //  with the display hardware can be time consuming.
+    //
+    const bool displayShaftAngleOnLEDDisplay = true;
+    const float32_t speedReductionDivider    = 0.03F;
 }

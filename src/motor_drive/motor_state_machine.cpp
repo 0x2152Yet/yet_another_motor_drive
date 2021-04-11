@@ -347,6 +347,16 @@ void motorStateMachine::processIdleState(motorStates &newState)
 {
     newState = motorIdleState;
 
+    if (MotorConstants::controlWithEstimatedAngle)
+    {
+        //
+        //  When the motor is disabled, shaft angle data is not reliable if
+        //  we are estimating the motor angle.
+        //
+        feedbackMotorSpeed = 0.0F;
+        feedbackShaftAngle = 0.0F;
+    }
+
     if (startCommanded)
     {
         //

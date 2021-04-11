@@ -84,6 +84,11 @@ namespace positionDisplayConsts
     const uint8_t bytesInLEDCommand = 2U;
     const uint8_t registerIndex     = 0U;
     const uint8_t valueIndex        = 1U;
+
+    //
+    //  At startup, we delay a while before we start updating the device.
+    //
+    const tickTime_s startupDelay = 5U;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -105,8 +110,11 @@ dataLogger::dataLogger() :
     lowRateItem3(0.0F),
     lowRateItem4(0.0F),
     lowRateItem5(0.0F),
-    lowRatePosition(0.0F),
-    lastPositionLED(0)
+    angleForDisplay(0.0F),
+    speedForDisplay(0.0F),
+    reducedAngle(0.0F),
+    lastDisplayUpdateTime(0U),
+    lastPositionLED(positionDisplayConsts::LED0BrightnessControlAddress)
 {
     memset(logData, 0U, sizeof(logData));
 }
@@ -214,6 +222,14 @@ void dataLogger::updateDataLog()
     }
 
     //
+    //  We latch data for the motor angle display.
+    //
+    angleForDisplay =
+        theMotorController.theMotorStateMachine.motorAngleAndSpeedManager.presentAnalogHallAngle;
+    speedForDisplay =
+        theMotorController.theMotorStateMachine.feedbackMotorSpeed;
+
+    //
     //  If it is time, we update the low rate items.
     //
     if (lowRateItemDownsampleCounter >= lowRateItemDownsample)
@@ -241,9 +257,6 @@ void dataLogger::updateDataLog()
     {
         lowRateItemDownsampleCounter++;
     }
-
-    lowRatePosition =
-        theMotorController.theMotorStateMachine.motorAngleAndSpeedManager.presentAnalogHallAngle;
 
     //
     //  For now, the DAC outputs are hard-coded.  Make sure you update the
@@ -341,12 +354,66 @@ void dataLogger::printLowRateItems()
     }
     else
     {
+        if (MotorConstants::displayShaftAngleOnLEDDisplay)
+        {
+            displayMotorAngle();
+        }
+    }
+}
+
+////////////////////////////////////////////////////////////////////////////////
+//
+//  This lights an external LED that corresponds to the motor shaft angle.
+//  This exists simply to take advantage of a feature included with the
+//  external speed command encoder.
+//
+////////////////////////////////////////////////////////////////////////////////
+void dataLogger::displayMotorAngle()
+{
+    using namespace positionDisplayConsts;
+
+    //
+    //  If the motor is disabled, we use the actual shaft angle for our
+    //  display if we have an encoder.
+    //
+    if (!(theMotorController.theMotorStateMachine.motorEnabled()))
+    {
+        reducedAngle = angleForDisplay;
+        lastDisplayUpdateTime = theTimers.getMedResTime();
+    }
+    else
+    {
+        //
+        //  When the motor is running, we create an angle based on a reduced
+        //  motor speed.  If we use the actual motor speed. the angle changes
+        //  to quickly to produce a meaningful display.
+        //
+        const float32_t reducedSpeed =
+            speedForDisplay * MotorConstants::speedReductionDivider;
+
+        const time_s deltaSeconds =
+            (theTimers.getMedResDelta(lastDisplayUpdateTime) *
+            GlobalConstants::secondsPerMillisecone);
+        lastDisplayUpdateTime = theTimers.getMedResTime();
+        const electricalAngle_rad reducedAngleChange =
+            reducedSpeed * deltaSeconds;
+        reducedAngle =
+            motorAngleAndSpeed::offsetShaftAngle(reducedAngle, reducedAngleChange);
+    }
+
+    //
+    //  We don't start to update the display until the processor has been
+    //  running for a while.  If we try to talk to the display too quickly
+    //  after reset, it sometimes upsets the display controller.
+    //
+    if (theTimers.getLowResTime() > startupDelay)
+    {
         //
         //  We light an LED based on the motor's position.
         //
         const float32_t radiansPerLED = GlobalConstants::twoPi / numberOfLEDs;
         uint8_t thisLED =
-            static_cast<uint8_t>((lowRatePosition / radiansPerLED) + 0.5F);
+            static_cast<uint8_t>(reducedAngle / radiansPerLED);
 
         if (thisLED > maxLEDOffset)
         {
@@ -362,18 +429,17 @@ void dataLogger::printLowRateItems()
             theI2CInterface.writeToI2CDevice(
                 LEDControllerAddress, lightLEDCommand, bytesInLEDCommand);
 
-            if (lastPositionLED != 0U)
-            {
-                lightLEDCommand[registerIndex] = lastPositionLED;
-                lightLEDCommand[valueIndex]    = LEDOffDutyCycle;
-                theI2CInterface.writeToI2CDevice(
-                    LEDControllerAddress, lightLEDCommand, bytesInLEDCommand);
-            }
+            //
+            //  We shut off the last LED.
+            //
+            lightLEDCommand[registerIndex] = lastPositionLED;
+            lightLEDCommand[valueIndex]    = LEDOffDutyCycle;
+            theI2CInterface.writeToI2CDevice(
+                LEDControllerAddress, lightLEDCommand, bytesInLEDCommand);
 
             lastPositionLED = thisLED;
         }
     }
-
 }
 
 

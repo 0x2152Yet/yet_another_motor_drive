@@ -132,10 +132,15 @@ private:
     float32_t   lowRateItem5;
 
     //
-    //  These are used to track the motor position LED display.
+    //  These are used to display the motor shaft angle on
+    //  an LED display.
     //
-    float32_t lowRatePosition;
-    uint8_t lastPositionLED;
+    void displayMotorAngle();
+    electricalAngle_rad angleForDisplay;
+    electricalSpeed_RPM speedForDisplay;
+    electricalAngle_rad reducedAngle;
+    tickTime_ms         lastDisplayUpdateTime;
+    uint8_t             lastPositionLED;
 
 };
 

@@ -54,6 +54,7 @@ namespace GlobalConstants
 
     const time_s    secondsPerMinute      = 60.0F;
     const float32_t millisecondsPerSecond = 1000.0F;
+    const float32_t secondsPerMillisecone = 1.0F / millisecondsPerSecond;
 
     const float32_t revolutionsPerRPM = 1000.0F;
 }
