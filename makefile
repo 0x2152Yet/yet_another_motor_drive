@@ -256,7 +256,7 @@ endef
 
 define CPP_COMPILE_COMMAND
 $(BASE_CPP_COMPILE_COMMAND) \
--MT $@ -MMD -MP -MF $(DEPEND_DIR)/$*.Td \
+-MT $@ -MMD -MP -MF $(DEPEND_DIR)/$*.d \
 $< -o $@
 endef
 
@@ -268,7 +268,7 @@ $(GCC_DIR)/bin/arm-none-eabi-gcc -c -D$(MAKE_DEFINES) \
 -Werror -Wall \
 -mthumb -mcpu=cortex-m4 -DARCH=armv7e-m -mfloat-abi=softfp -mfpu=fpv4-sp-d16 -$(OPT_FLAGS) -g3  \
 --specs=nano.specs \
--MT $@ -MMD -MP -MF $(DEPEND_DIR)/$*.Td \
+-MT $@ -MMD -MP -MF $(DEPEND_DIR)/$*.d \
 $(MAKE_INCLUDES) \
 $< -o $@
 endef
@@ -304,13 +304,11 @@ $(OBJS_DIR)/%.obj: %.cpp $(DEPEND_DIR)/%.d
 $(OBJS_DIR)/%.obj: %.cpp
 	@$(ECHO_FILE)
 	@$(CPP_COMPILE_COMMAND)
-	@mv -f $(DEPEND_DIR)/$*.Td $(DEPEND_DIR)/$*.d
 
 $(OBJS_DIR)/%.obj: %.c $(DEPEND_DIR)/%.d
 $(OBJS_DIR)/%.obj: %.c
 	@$(ECHO_FILE)
 	@$(C_COMPILE_COMMAND)
-	@mv -f $(DEPEND_DIR)/$*.Td $(DEPEND_DIR)/$*.d
 
 $(OBJS_DIR)/%.obj: %.s $(DEPEND_DIR)/%.d
 $(OBJS_DIR)/%.obj: %.s
