@@ -106,3 +106,4 @@ typedef uint32_t bitsPerSecond;
 //  These define types of other items.
 //
 typedef uint32_t bits;
+typedef uint32_t bytes;

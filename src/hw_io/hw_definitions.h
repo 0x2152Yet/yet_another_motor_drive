@@ -237,7 +237,7 @@ namespace UARTDefinitions
     //  no parity, and no hardware flow control.
     //
     USART_TypeDef *const testSupportUART = USART3;
-    const uint32_t testSupportBaudRate   = 921600U;
+    const uint32_t testSupportBaudRate   = 230400U;
 }
 
 //
