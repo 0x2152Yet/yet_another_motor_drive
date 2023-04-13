@@ -31,6 +31,10 @@
 ////////////////////////////////////////////////////////////////////////////////
 #pragma once
 
+#if __cplusplus > 199711L
+#define register    // Deprecated in C++11 but it is used by the ST libraries
+#endif
+
 #include "stm32f4xx_ll_adc.h"
 #include "stm32f4xx_ll_bus.h"
 #include "stm32f4xx_ll_dac.h"

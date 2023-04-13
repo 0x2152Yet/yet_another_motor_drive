@@ -165,7 +165,7 @@ endef
 #
 # These are where the various tools and support files live.
 #
-GCC_DIR := /Volumes/Macintosh\ HD/Applications/ARM
+GCC_DIR := /Volumes/Macintosh\ HD/Applications/ARMGNUToolchain/12.2.rel1/arm-none-eabi
 PERL := /usr/bin/perl
 
 #
@@ -278,7 +278,7 @@ define BASE_LINK_COMMAND
 $(GCC_DIR)/bin/arm-none-eabi-g++ $(LINK_OBJS) -L$(OBJS_DIR) \
 -mcpu=cortex-m3 -mthumb -mfloat-abi=soft -mfpu=auto -$(OPT_FLAGS) -g3 \
 -u _printf_float -fno-use-cxa-atexit \
--Xlinker --gc-sections -specs=nano.specs \
+-Xlinker --gc-sections -specs=nano.specs -Xlinker --no-warn-rwx-segment \
 -Xlinker -Map=$(EXE_DIR)/$(OUTPUT_NAME).map \
 -Xlinker -rpath-link -Xlinker $(GCC_DIR) \
 -L$(GCC_DIR) -Xlinker -q
