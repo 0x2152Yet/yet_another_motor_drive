@@ -97,7 +97,7 @@ void motorTransforms::performReducedClarkeTransformation (
     float32_t &resultBeta) const
 {
     resultAlpha = inputA;
-    resultBeta  = (inputA + (2.0F * inputB)) * GlobalConstants::sqrt3Over3;
+    resultBeta  = (inputA + (2.0F * inputB)) * GlobalConstants::oneOverSqrt3;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
